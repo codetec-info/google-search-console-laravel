@@ -1,0 +1,85 @@
+# Laravel/PHP
+/vendor/
+/storage/
+/node_modules/
+*.log
+*.tmp
+
+# Composer
+composer.phar
+composer.lock (if you want to ignore lock file, but typically keep it)
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# IDEs and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# PHP
+*.cache
+.phpunit.result.cache
+.php-cs-fixer.cache
+
+# Laravel specific
+/bootstrap/cache/
+*.key
+config/*.key
+
+# Testing
+/tests/coverage/
+/test-results/
+/phpunit.xml (if you have custom test config)
+
+# Documentation builds
+/docs/build/
+
+# Temporary files
+*.bak
+*.backup
+*.old
+
+# Package development
+# Uncomment if you want to ignore these during development
+# composer.lock
+# vendor/
+
+# Laravel Mix/Webpack
+/public/hot
+/public/storage
+/public/mix-manifest.json
+
+# Laravel Sail
+/docker-compose.override.yml
+
+# Vagrant
+.vagrant/
+
+# Homestead
+Homestead.json
+Homestead.yaml
+
+# Deployment
+/deploy.sh
+/deploy/
+
+# Cache and sessions
+/storage/framework/cache/
+/storage/framework/sessions/
+/storage/framework/testing/
+/storage/framework/views/
+.storage/
