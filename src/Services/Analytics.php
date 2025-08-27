@@ -3,40 +3,57 @@
 namespace MichaelCrowcroft\GoogleSearchConsole\Services;
 
 use Google\Service\Webmasters;
-use Google\Service\Webmasters\ApiDataRow;
 use Google\Service\Webmasters\SearchAnalyticsQueryRequest;
 
-/**
- * Search Analytics service for Google Search Console
- *
- * This class provides methods to query search analytics data including
- * clicks, impressions, CTR, and position for various dimensions.
- */
-class SearchAnalytics
+class Analytics
 {
     protected Webmasters $webmasters;
+    protected ?string $defaultSiteUrl;
 
     /**
-     * Create a new SearchAnalytics instance
+     * Create a new Analytics instance
      *
      * @param Webmasters $webmasters
+     * @param string|null $defaultSiteUrl
      */
-    public function __construct(Webmasters $webmasters)
+    public function __construct(Webmasters $webmasters, ?string $defaultSiteUrl = null)
     {
         $this->webmasters = $webmasters;
+        $this->defaultSiteUrl = $defaultSiteUrl;
+    }
+
+    /**
+     * Resolve site URL - use provided URL or fall back to default
+     *
+     * @param string|null $siteUrl
+     * @return string
+     * @throws \InvalidArgumentException
+     */
+    protected function resolveSiteUrl(?string $siteUrl): string
+    {
+        $url = $siteUrl ?: $this->defaultSiteUrl;
+
+        if (!$url) {
+            throw new \InvalidArgumentException('Site URL is required. Set a default site URL with setSiteUrl() or pass it as a parameter.');
+        }
+
+        return $url;
     }
 
     /**
      * Query search analytics data
      *
-     * @param string $siteUrl The site's URL (e.g., 'https://www.example.com/')
+     * @param string|null $siteUrl The site's URL (e.g., 'https://www.example.com/'). If null, uses default site URL.
      * @param array $options Query options
      * @return array
      *
      * @throws \Google\Service\Exception
+     * @throws \InvalidArgumentException
      */
-    public function query(string $siteUrl, array $options = []): array
+    public function query(?string $siteUrl = null, array $options = []): array
     {
+        $siteUrl = $this->resolveSiteUrl($siteUrl);
+
         $request = new SearchAnalyticsQueryRequest();
 
         // Set start and end dates
@@ -82,17 +99,19 @@ class SearchAnalytics
     /**
      * Get search analytics data with simplified parameters
      *
-     * @param string $siteUrl The site's URL
+     * @param string|null $siteUrl The site's URL. If null, uses default site URL.
      * @param string $startDate Start date (YYYY-MM-DD)
      * @param string $endDate End date (YYYY-MM-DD)
      * @param array $dimensions Dimensions to group by
      * @param int $rowLimit Maximum number of rows to return
      * @return array
+     *
+     * @throws \InvalidArgumentException
      */
     public function getData(
-        string $siteUrl,
-        string $startDate,
-        string $endDate,
+        ?string $siteUrl = null,
+        string $startDate = '',
+        string $endDate = '',
         array $dimensions = [],
         int $rowLimit = 1000
     ): array {
@@ -107,16 +126,18 @@ class SearchAnalytics
     /**
      * Get query performance data
      *
-     * @param string $siteUrl The site's URL
+     * @param string|null $siteUrl The site's URL. If null, uses default site URL.
      * @param string $startDate Start date (YYYY-MM-DD)
      * @param string $endDate End date (YYYY-MM-DD)
      * @param int $rowLimit Maximum number of rows to return
      * @return array
+     *
+     * @throws \InvalidArgumentException
      */
     public function getQueryData(
-        string $siteUrl,
-        string $startDate,
-        string $endDate,
+        ?string $siteUrl = null,
+        string $startDate = '',
+        string $endDate = '',
         int $rowLimit = 1000
     ): array {
         return $this->getData($siteUrl, $startDate, $endDate, ['query'], $rowLimit);
@@ -125,16 +146,18 @@ class SearchAnalytics
     /**
      * Get page performance data
      *
-     * @param string $siteUrl The site's URL
+     * @param string|null $siteUrl The site's URL. If null, uses default site URL.
      * @param string $startDate Start date (YYYY-MM-DD)
      * @param string $endDate End date (YYYY-MM-DD)
      * @param int $rowLimit Maximum number of rows to return
      * @return array
+     *
+     * @throws \InvalidArgumentException
      */
     public function getPageData(
-        string $siteUrl,
-        string $startDate,
-        string $endDate,
+        ?string $siteUrl = null,
+        string $startDate = '',
+        string $endDate = '',
         int $rowLimit = 1000
     ): array {
         return $this->getData($siteUrl, $startDate, $endDate, ['page'], $rowLimit);
@@ -143,16 +166,18 @@ class SearchAnalytics
     /**
      * Get country performance data
      *
-     * @param string $siteUrl The site's URL
+     * @param string|null $siteUrl The site's URL. If null, uses default site URL.
      * @param string $startDate Start date (YYYY-MM-DD)
      * @param string $endDate End date (YYYY-MM-DD)
      * @param int $rowLimit Maximum number of rows to return
      * @return array
+     *
+     * @throws \InvalidArgumentException
      */
     public function getCountryData(
-        string $siteUrl,
-        string $startDate,
-        string $endDate,
+        ?string $siteUrl = null,
+        string $startDate = '',
+        string $endDate = '',
         int $rowLimit = 1000
     ): array {
         return $this->getData($siteUrl, $startDate, $endDate, ['country'], $rowLimit);
@@ -161,16 +186,18 @@ class SearchAnalytics
     /**
      * Get device performance data
      *
-     * @param string $siteUrl The site's URL
+     * @param string|null $siteUrl The site's URL. If null, uses default site URL.
      * @param string $startDate Start date (YYYY-MM-DD)
      * @param string $endDate End date (YYYY-MM-DD)
      * @param int $rowLimit Maximum number of rows to return
      * @return array
+     *
+     * @throws \InvalidArgumentException
      */
     public function getDeviceData(
-        string $siteUrl,
-        string $startDate,
-        string $endDate,
+        ?string $siteUrl = null,
+        string $startDate = '',
+        string $endDate = '',
         int $rowLimit = 1000
     ): array {
         return $this->getData($siteUrl, $startDate, $endDate, ['device'], $rowLimit);
@@ -179,16 +206,18 @@ class SearchAnalytics
     /**
      * Get query and page combination data
      *
-     * @param string $siteUrl The site's URL
+     * @param string|null $siteUrl The site's URL. If null, uses default site URL.
      * @param string $startDate Start date (YYYY-MM-DD)
      * @param string $endDate End date (YYYY-MM-DD)
      * @param int $rowLimit Maximum number of rows to return
      * @return array
+     *
+     * @throws \InvalidArgumentException
      */
     public function getQueryPageData(
-        string $siteUrl,
-        string $startDate,
-        string $endDate,
+        ?string $siteUrl = null,
+        string $startDate = '',
+        string $endDate = '',
         int $rowLimit = 1000
     ): array {
         return $this->getData($siteUrl, $startDate, $endDate, ['query', 'page'], $rowLimit);

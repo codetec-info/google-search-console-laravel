@@ -13,29 +13,53 @@ use Google\Service\SearchConsole;
 class UrlInspection
 {
     protected SearchConsole $searchConsole;
+    protected ?string $defaultSiteUrl;
 
     /**
      * Create a new UrlInspection instance
      *
      * @param SearchConsole $searchConsole
+     * @param string|null $defaultSiteUrl
      */
-    public function __construct(SearchConsole $searchConsole)
+    public function __construct(SearchConsole $searchConsole, ?string $defaultSiteUrl = null)
     {
         $this->searchConsole = $searchConsole;
+        $this->defaultSiteUrl = $defaultSiteUrl;
+    }
+
+    /**
+     * Resolve site URL - use provided URL or fall back to default
+     *
+     * @param string|null $siteUrl
+     * @return string
+     * @throws \InvalidArgumentException
+     */
+    protected function resolveSiteUrl(?string $siteUrl): string
+    {
+        $url = $siteUrl ?: $this->defaultSiteUrl;
+
+        if (!$url) {
+            throw new \InvalidArgumentException('Site URL is required. Set a default site URL with setSiteUrl() or pass it as a parameter.');
+        }
+
+        return $url;
     }
 
     /**
      * Inspect a URL's indexing status
      *
-     * @param string $siteUrl The site's URL (e.g., 'https://www.example.com/')
+     * @param string|null $siteUrl The site's URL (e.g., 'https://www.example.com/'). If null, uses default site URL.
      * @param string $inspectionUrl The specific URL to inspect
      * @param string $languageCode Optional language code for the inspection
      * @return array
      *
      * @throws \Google\Service\Exception
+     * @throws \InvalidArgumentException
      */
-    public function inspect(string $siteUrl, string $inspectionUrl, string $languageCode = 'en-US'): array
+    public function inspect(?string $siteUrl = null, string $inspectionUrl, string $languageCode = 'en-US'): array
     {
+        $siteUrl = $this->resolveSiteUrl($siteUrl);
+
         try {
             $request = new \Google\Service\SearchConsole\InspectUrlIndexRequest();
             $request->setInspectionUrl($inspectionUrl);
@@ -52,13 +76,17 @@ class UrlInspection
     /**
      * Inspect multiple URLs
      *
-     * @param string $siteUrl The site's URL
+     * @param string|null $siteUrl The site's URL. If null, uses default site URL.
      * @param array $inspectionUrls Array of URLs to inspect
      * @param string $languageCode Optional language code for the inspection
      * @return array
+     *
+     * @throws \InvalidArgumentException
      */
-    public function inspectMultiple(string $siteUrl, array $inspectionUrls, string $languageCode = 'en-US'): array
+    public function inspectMultiple(?string $siteUrl = null, array $inspectionUrls, string $languageCode = 'en-US'): array
     {
+        $siteUrl = $this->resolveSiteUrl($siteUrl);
+
         $results = [];
 
         foreach ($inspectionUrls as $url) {
@@ -80,11 +108,13 @@ class UrlInspection
     /**
      * Get URL inspection result with simplified interface
      *
-     * @param string $siteUrl The site's URL
+     * @param string|null $siteUrl The site's URL. If null, uses default site URL.
      * @param string $inspectionUrl The specific URL to inspect
      * @return array
+     *
+     * @throws \InvalidArgumentException
      */
-    public function getResult(string $siteUrl, string $inspectionUrl): array
+    public function getResult(?string $siteUrl = null, string $inspectionUrl): array
     {
         return $this->inspect($siteUrl, $inspectionUrl);
     }
@@ -92,11 +122,13 @@ class UrlInspection
     /**
      * Check if a URL is indexed
      *
-     * @param string $siteUrl The site's URL
+     * @param string|null $siteUrl The site's URL. If null, uses default site URL.
      * @param string $inspectionUrl The specific URL to check
      * @return bool
+     *
+     * @throws \InvalidArgumentException
      */
-    public function isIndexed(string $siteUrl, string $inspectionUrl): bool
+    public function isIndexed(?string $siteUrl = null, string $inspectionUrl): bool
     {
         try {
             $result = $this->inspect($siteUrl, $inspectionUrl);
@@ -109,11 +141,13 @@ class UrlInspection
     /**
      * Get indexing issues for a URL
      *
-     * @param string $siteUrl The site's URL
+     * @param string|null $siteUrl The site's URL. If null, uses default site URL.
      * @param string $inspectionUrl The specific URL to inspect
      * @return array
+     *
+     * @throws \InvalidArgumentException
      */
-    public function getIndexingIssues(string $siteUrl, string $inspectionUrl): array
+    public function getIndexingIssues(?string $siteUrl = null, string $inspectionUrl): array
     {
         try {
             $result = $this->inspect($siteUrl, $inspectionUrl);
@@ -142,11 +176,13 @@ class UrlInspection
     /**
      * Get mobile usability issues for a URL
      *
-     * @param string $siteUrl The site's URL
+     * @param string|null $siteUrl The site's URL. If null, uses default site URL.
      * @param string $inspectionUrl The specific URL to inspect
      * @return array
+     *
+     * @throws \InvalidArgumentException
      */
-    public function getMobileUsabilityIssues(string $siteUrl, string $inspectionUrl): array
+    public function getMobileUsabilityIssues(?string $siteUrl = null, string $inspectionUrl): array
     {
         try {
             $result = $this->inspect($siteUrl, $inspectionUrl);
@@ -164,11 +200,13 @@ class UrlInspection
     /**
      * Get rich results for a URL
      *
-     * @param string $siteUrl The site's URL
+     * @param string|null $siteUrl The site's URL. If null, uses default site URL.
      * @param string $inspectionUrl The specific URL to inspect
      * @return array
+     *
+     * @throws \InvalidArgumentException
      */
-    public function getRichResults(string $siteUrl, string $inspectionUrl): array
+    public function getRichResults(?string $siteUrl = null, string $inspectionUrl): array
     {
         try {
             $result = $this->inspect($siteUrl, $inspectionUrl);

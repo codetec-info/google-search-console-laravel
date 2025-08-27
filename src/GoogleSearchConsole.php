@@ -5,7 +5,7 @@ namespace MichaelCrowcroft\GoogleSearchConsole;
 use Google\Client;
 use Google\Service\Webmasters;
 use Google\Service\SearchConsole;
-use MichaelCrowcroft\GoogleSearchConsole\Services\SearchAnalytics;
+use MichaelCrowcroft\GoogleSearchConsole\Services\Analytics;
 use MichaelCrowcroft\GoogleSearchConsole\Services\Sitemaps;
 use MichaelCrowcroft\GoogleSearchConsole\Services\Sites;
 use MichaelCrowcroft\GoogleSearchConsole\Services\UrlInspection;
@@ -22,6 +22,7 @@ class GoogleSearchConsole
     protected Webmasters $webmasters;
     protected SearchConsole $searchConsole;
     protected ?string $accessToken = null;
+    protected ?string $defaultSiteUrl = null;
 
     /**
      * Create a new Google Search Console instance
@@ -100,6 +101,29 @@ class GoogleSearchConsole
     }
 
     /**
+     * Set the default site URL
+     *
+     * @param string $siteUrl
+     * @return self
+     */
+    public function setSiteUrl(string $siteUrl): self
+    {
+        $this->defaultSiteUrl = $siteUrl;
+
+        return $this;
+    }
+
+    /**
+     * Get the default site URL
+     *
+     * @return string|null
+     */
+    public function getSiteUrl(): ?string
+    {
+        return $this->defaultSiteUrl;
+    }
+
+    /**
      * Get the Google API client instance
      *
      * @return Client
@@ -130,13 +154,13 @@ class GoogleSearchConsole
     }
 
     /**
-     * Get Search Analytics service
+     * Get Analytics service
      *
-     * @return SearchAnalytics
+     * @return Analytics
      */
-    public function searchAnalytics(): SearchAnalytics
+    public function analytics(): Analytics
     {
-        return new SearchAnalytics($this->webmasters);
+        return new Analytics($this->webmasters, $this->defaultSiteUrl);
     }
 
     /**
@@ -146,7 +170,7 @@ class GoogleSearchConsole
      */
     public function sitemaps(): Sitemaps
     {
-        return new Sitemaps($this->webmasters);
+        return new Sitemaps($this->webmasters, $this->defaultSiteUrl);
     }
 
     /**
@@ -156,7 +180,7 @@ class GoogleSearchConsole
      */
     public function sites(): Sites
     {
-        return new Sites($this->webmasters);
+        return new Sites($this->webmasters, $this->defaultSiteUrl);
     }
 
     /**
@@ -166,6 +190,6 @@ class GoogleSearchConsole
      */
     public function urlInspection(): UrlInspection
     {
-        return new UrlInspection($this->searchConsole);
+        return new UrlInspection($this->searchConsole, $this->defaultSiteUrl);
     }
 }

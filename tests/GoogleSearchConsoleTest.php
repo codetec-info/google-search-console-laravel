@@ -58,8 +58,8 @@ class GoogleSearchConsoleTest extends TestCase
         $gsc = new GoogleSearchConsole();
 
         $this->assertInstanceOf(
-            \MichaelCrowcroft\GoogleSearchConsole\Services\SearchAnalytics::class,
-            $gsc->searchAnalytics()
+            \MichaelCrowcroft\GoogleSearchConsole\Services\Analytics::class,
+            $gsc->analytics()
         );
 
         $this->assertInstanceOf(
@@ -81,8 +81,8 @@ class GoogleSearchConsoleTest extends TestCase
     public function test_facade_services_can_be_accessed()
     {
         $this->assertInstanceOf(
-            \MichaelCrowcroft\GoogleSearchConsole\Services\SearchAnalytics::class,
-            GoogleSearchConsoleFacade::searchAnalytics()
+            \MichaelCrowcroft\GoogleSearchConsole\Services\Analytics::class,
+            GoogleSearchConsoleFacade::analytics()
         );
 
         $this->assertInstanceOf(

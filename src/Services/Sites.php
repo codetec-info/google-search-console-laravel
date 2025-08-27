@@ -13,15 +13,36 @@ use Google\Service\Webmasters;
 class Sites
 {
     protected Webmasters $webmasters;
+    protected ?string $defaultSiteUrl;
 
     /**
      * Create a new Sites instance
      *
      * @param Webmasters $webmasters
+     * @param string|null $defaultSiteUrl
      */
-    public function __construct(Webmasters $webmasters)
+    public function __construct(Webmasters $webmasters, ?string $defaultSiteUrl = null)
     {
         $this->webmasters = $webmasters;
+        $this->defaultSiteUrl = $defaultSiteUrl;
+    }
+
+    /**
+     * Resolve site URL - use provided URL or fall back to default
+     *
+     * @param string|null $siteUrl
+     * @return string
+     * @throws \InvalidArgumentException
+     */
+    protected function resolveSiteUrl(?string $siteUrl): string
+    {
+        $url = $siteUrl ?: $this->defaultSiteUrl;
+
+        if (!$url) {
+            throw new \InvalidArgumentException('Site URL is required. Set a default site URL with setSiteUrl() or pass it as a parameter.');
+        }
+
+        return $url;
     }
 
     /**
@@ -45,13 +66,16 @@ class Sites
     /**
      * Get details about a specific site
      *
-     * @param string $siteUrl The site's URL (e.g., 'https://www.example.com/')
+     * @param string|null $siteUrl The site's URL (e.g., 'https://www.example.com/'). If null, uses default site URL.
      * @return array|null Array with 'site_url' and 'permission_level' fields, or null if not found
      *
      * @throws \Google\Service\Exception
+     * @throws \InvalidArgumentException
      */
-    public function get(string $siteUrl): ?array
+    public function get(?string $siteUrl = null): ?array
     {
+        $siteUrl = $this->resolveSiteUrl($siteUrl);
+
         try {
             $response = $this->webmasters->sites->get($siteUrl);
 
@@ -64,10 +88,12 @@ class Sites
     /**
      * Check if a site is verified
      *
-     * @param string $siteUrl The site's URL
+     * @param string|null $siteUrl The site's URL. If null, uses default site URL.
      * @return bool
+     *
+     * @throws \InvalidArgumentException
      */
-    public function isVerified(string $siteUrl): bool
+    public function isVerified(?string $siteUrl = null): bool
     {
         try {
             $site = $this->get($siteUrl);
