@@ -27,7 +27,7 @@ class Sites
     /**
      * List all verified sites
      *
-     * @return array
+     * @return array Array of sites with 'site_url' and 'permission_level' fields
      *
      * @throws \Google\Service\Exception
      */
@@ -46,7 +46,7 @@ class Sites
      * Get details about a specific site
      *
      * @param string $siteUrl The site's URL (e.g., 'https://www.example.com/')
-     * @return array|null
+     * @return array|null Array with 'site_url' and 'permission_level' fields, or null if not found
      *
      * @throws \Google\Service\Exception
      */
@@ -80,7 +80,7 @@ class Sites
     /**
      * Get all verified sites with their details
      *
-     * @return array
+     * @return array Array of sites with 'site_url' and 'permission_level' fields
      */
     public function getAllWithDetails(): array
     {
@@ -100,36 +100,45 @@ class Sites
     /**
      * Get sites by type
      *
+     * Note: The Google Search Console API no longer provides site type information.
+     * This method is deprecated and will return all sites.
+     *
      * @param string $type Site type ('SITE' or 'DOMAIN')
      * @return array
+     * @deprecated Site type information is no longer available from the API
      */
     public function getByType(string $type): array
     {
-        $sites = $this->list();
-
-        return array_filter($sites, function ($site) use ($type) {
-            return $site['type'] === $type;
-        });
+        // Since the API no longer provides type information, return all sites
+        return $this->list();
     }
 
     /**
      * Get domain properties (sites with type 'DOMAIN')
      *
+     * Note: The Google Search Console API no longer provides site type information.
+     * This method will return all sites.
+     *
      * @return array
+     * @deprecated Site type information is no longer available from the API
      */
     public function getDomainProperties(): array
     {
-        return $this->getByType('DOMAIN');
+        return $this->list();
     }
 
     /**
      * Get regular site properties (sites with type 'SITE')
      *
+     * Note: The Google Search Console API no longer provides site type information.
+     * This method will return all sites.
+     *
      * @return array
+     * @deprecated Site type information is no longer available from the API
      */
     public function getSiteProperties(): array
     {
-        return $this->getByType('SITE');
+        return $this->list();
     }
 
     /**
@@ -161,7 +170,6 @@ class Sites
     {
         return [
             'site_url' => $site->getSiteUrl(),
-            'type' => $site->getType(),
             'permission_level' => $site->getPermissionLevel(),
         ];
     }
