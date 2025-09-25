@@ -1,5 +1,5 @@
 {
-    "name": "michaelcrowcroft/google-search-console-laravel",
+    "name": "codetec/google-search-console-laravel",
     "description": "A Laravel package for Google Search Console API integration",
     "keywords": [
         "google",
@@ -8,19 +8,18 @@
         "seo",
         "analytics"
     ],
-    "homepage": "https://github.com/michaelcrowcroft/google-search-console-laravel",
+    "homepage": "https://github.com/codetec-info/google-search-console-laravel",
     "license": "MIT",
     "authors": [
         {
-            "name": "Michael Crowcroft",
-            "email": "michael@example.com",
+            "name": "Hassan Saad",
             "role": "Developer"
         }
     ],
     "require": {
-        "php": "^8.4",
+        "php": "^8.3",
         "google/apiclient": "^2.18",
-        "illuminate/contracts": "^11.0||^12.0",
+        "illuminate/contracts": "^10.0||^11.0||^12.0",
         "spatie/laravel-package-tools": "^1.16"
     },
     "require-dev": {
