@@ -1,5 +1,5 @@
 {
-    "name": "codetec/google-search-console-laravel",
+    "name": "codetec-info/google-search-console-laravel",
     "description": "A Laravel package for Google Search Console API integration",
     "keywords": [
         "google",
