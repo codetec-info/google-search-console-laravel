@@ -68,7 +68,7 @@ class UrlInspection
 
             $response = $this->searchConsole->urlInspection_index->inspect($request);
 
-            return $this->formatInspectionResponse($response);
+            return $this->formatInspectionResponse($response, $inspectionUrl);
         } catch (\Exception $e) {
             throw new \Google\Service\Exception($e->getMessage(), $e->getCode(), $e, null);
         }
@@ -228,19 +228,20 @@ class UrlInspection
      * @param mixed $response
      * @return array
      */
-    protected function formatInspectionResponse($response): array
+    protected function formatInspectionResponse($response, $inspectionUrl): array
     {
         $inspectionResult = $response->getInspectionResult();
+        $statusResult = $inspectionResult->getIndexStatusResult();
 
         $result = [
-            'inspection_url' => $inspectionResult->getInspectionUrl(),
-            'indexing_state' => $inspectionResult->getIndexingState(),
-            'coverage_state' => $inspectionResult->getCoverageState(),
-            'verdict' => $inspectionResult->getVerdict(),
-            'last_crawl_time' => $inspectionResult->getLastCrawlTime(),
-            'page_fetch_state' => $inspectionResult->getPageFetchState(),
-            'robots_txt_state' => $inspectionResult->getRobotsTxtState(),
-            'crawled_as' => $inspectionResult->getCrawledAs(),
+            'inspection_url' => $inspectionUrl,
+            'indexing_state' => $statusResult->getIndexingState(),
+            'coverage_state' => $statusResult->getCoverageState(),
+            'verdict' => $statusResult->getVerdict(),
+            'last_crawl_time' => $statusResult->getLastCrawlTime(),
+            'page_fetch_state' => $statusResult->getPageFetchState(),
+            'robots_txt_state' => $statusResult->getRobotsTxtState(),
+            'crawled_as' => $statusResult->getCrawledAs(),
         ];
 
         // Add mobile usability result if available
