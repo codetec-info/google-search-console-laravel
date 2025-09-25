@@ -64,8 +64,9 @@ class UrlInspection
             $request = new \Google\Service\SearchConsole\InspectUrlIndexRequest();
             $request->setInspectionUrl($inspectionUrl);
             $request->setLanguageCode($languageCode);
+            $request->setSiteUrl($siteUrl);
 
-            $response = $this->searchConsole->urlInspection_index->inspect($request, $siteUrl);
+            $response = $this->searchConsole->urlInspection_index->inspect($request);
 
             return $this->formatInspectionResponse($response);
         } catch (\Exception $e) {
