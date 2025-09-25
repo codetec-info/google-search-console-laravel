@@ -14,13 +14,11 @@ use Google\Service\Webmasters\WmxSitemap;
 class Sitemaps
 {
     protected Webmasters $webmasters;
+
     protected ?string $defaultSiteUrl;
 
     /**
      * Create a new Sitemaps instance
-     *
-     * @param Webmasters $webmasters
-     * @param string|null $defaultSiteUrl
      */
     public function __construct(Webmasters $webmasters, ?string $defaultSiteUrl = null)
     {
@@ -31,15 +29,13 @@ class Sitemaps
     /**
      * Resolve site URL - use provided URL or fall back to default
      *
-     * @param string|null $siteUrl
-     * @return string
      * @throws \InvalidArgumentException
      */
     protected function resolveSiteUrl(?string $siteUrl): string
     {
         $url = $siteUrl ?: $this->defaultSiteUrl;
 
-        if (!$url) {
+        if (! $url) {
             throw new \InvalidArgumentException('Site URL is required. Set a default site URL with setSiteUrl() or pass it as a parameter.');
         }
 
@@ -49,8 +45,7 @@ class Sitemaps
     /**
      * List all sitemaps for a site
      *
-     * @param string|null $siteUrl The site's URL (e.g., 'https://www.example.com/'). If null, uses default site URL.
-     * @return array
+     * @param  string|null  $siteUrl  The site's URL (e.g., 'https://www.example.com/'). If null, uses default site URL.
      *
      * @throws \Google\Service\Exception
      * @throws \InvalidArgumentException
@@ -71,14 +66,13 @@ class Sitemaps
     /**
      * Get a specific sitemap
      *
-     * @param string|null $siteUrl The site's URL. If null, uses default site URL.
-     * @param string $feedpath The sitemap feedpath (e.g., 'sitemap.xml')
-     * @return array|null
+     * @param  string|null  $siteUrl  The site's URL. If null, uses default site URL.
+     * @param  string  $feedpath  The sitemap feedpath (e.g., 'sitemap.xml')
      *
      * @throws \Google\Service\Exception
      * @throws \InvalidArgumentException
      */
-    public function get(?string $siteUrl = null, string $feedpath): ?array
+    public function get(?string $siteUrl, string $feedpath): ?array
     {
         $siteUrl = $this->resolveSiteUrl($siteUrl);
 
@@ -94,14 +88,13 @@ class Sitemaps
     /**
      * Submit a sitemap for indexing
      *
-     * @param string|null $siteUrl The site's URL. If null, uses default site URL.
-     * @param string $feedpath The sitemap feedpath (e.g., 'sitemap.xml')
-     * @return array
+     * @param  string|null  $siteUrl  The site's URL. If null, uses default site URL.
+     * @param  string  $feedpath  The sitemap feedpath (e.g., 'sitemap.xml')
      *
      * @throws \Google\Service\Exception
      * @throws \InvalidArgumentException
      */
-    public function submit(?string $siteUrl = null, string $feedpath): array
+    public function submit(?string $siteUrl, string $feedpath): array
     {
         $siteUrl = $this->resolveSiteUrl($siteUrl);
 
@@ -117,14 +110,13 @@ class Sitemaps
     /**
      * Delete a sitemap
      *
-     * @param string|null $siteUrl The site's URL. If null, uses default site URL.
-     * @param string $feedpath The sitemap feedpath to delete
-     * @return void
+     * @param  string|null  $siteUrl  The site's URL. If null, uses default site URL.
+     * @param  string  $feedpath  The sitemap feedpath to delete
      *
      * @throws \Google\Service\Exception
      * @throws \InvalidArgumentException
      */
-    public function delete(?string $siteUrl = null, string $feedpath): void
+    public function delete(?string $siteUrl, string $feedpath): void
     {
         $siteUrl = $this->resolveSiteUrl($siteUrl);
 
@@ -138,17 +130,16 @@ class Sitemaps
     /**
      * Get sitemap submission status and errors
      *
-     * @param string|null $siteUrl The site's URL. If null, uses default site URL.
-     * @param string $feedpath The sitemap feedpath
-     * @return array|null
+     * @param  string|null  $siteUrl  The site's URL. If null, uses default site URL.
+     * @param  string  $feedpath  The sitemap feedpath
      *
      * @throws \InvalidArgumentException
      */
-    public function getStatus(?string $siteUrl = null, string $feedpath): ?array
+    public function getStatus(?string $siteUrl, string $feedpath): ?array
     {
         $sitemap = $this->get($siteUrl, $feedpath);
 
-        if (!$sitemap) {
+        if (! $sitemap) {
             return null;
         }
 
@@ -168,8 +159,7 @@ class Sitemaps
     /**
      * Get all sitemaps with their status
      *
-     * @param string|null $siteUrl The site's URL. If null, uses default site URL.
-     * @return array
+     * @param  string|null  $siteUrl  The site's URL. If null, uses default site URL.
      *
      * @throws \InvalidArgumentException
      */
@@ -185,8 +175,7 @@ class Sitemaps
     /**
      * Format sitemaps list response
      *
-     * @param mixed $response
-     * @return array
+     * @param  mixed  $response
      */
     protected function formatSitemapsResponse($response): array
     {
@@ -204,12 +193,16 @@ class Sitemaps
     /**
      * Format single sitemap response
      *
-     * @param mixed $sitemap
-     * @return array
+     * @param  mixed  $sitemap
      */
     protected function formatSitemapResponse($sitemap): array
     {
-        $contents = $sitemap->getContents();
+        // check if $sitemap is an instance of WmxSitemap
+        if ($sitemap instanceof WmxSitemap) {
+            $contents = $sitemap->getContents();
+        } else {
+            return [];
+        }
 
         $formattedContents = [];
         if ($contents) {
