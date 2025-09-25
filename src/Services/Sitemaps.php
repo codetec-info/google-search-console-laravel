@@ -106,11 +106,7 @@ class Sitemaps
         $siteUrl = $this->resolveSiteUrl($siteUrl);
 
         try {
-            $sitemap = new WmxSitemap();
-            $sitemap->setPath($feedpath);
-            $sitemap->setType('WEB'); // Default type for web sitemaps
-
-            $response = $this->webmasters->sitemaps->submit($siteUrl, $feedpath, $sitemap);
+            $response = $this->webmasters->sitemaps->submit($siteUrl, $feedpath);
 
             return $this->formatSitemapResponse($response);
         } catch (\Exception $e) {
