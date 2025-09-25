@@ -233,7 +233,7 @@ class UrlInspection
         $inspectionResult = $response->getInspectionResult();
 
         $result = [
-            'inspection_url' => $response->getInspectionUrl(),
+            'inspection_url' => $inspectionResult->getInspectionUrl(),
             'indexing_state' => $inspectionResult->getIndexingState(),
             'coverage_state' => $inspectionResult->getCoverageState(),
             'verdict' => $inspectionResult->getVerdict(),
